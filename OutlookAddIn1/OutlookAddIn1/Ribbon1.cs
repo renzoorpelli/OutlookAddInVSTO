@@ -26,21 +26,21 @@ namespace OutlookAddIn1
             var listaProyectos = ObtenerNombresProyectos();
             this.CargarElementosCmbProyectos(listaProyectos);
 
-            
+
         }
 
         //punto 2
         private void btnGenerarTemplate_Click(object sender, RibbonControlEventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            
+
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
                 carpetaSeleccionadaPath = folderBrowserDialog.SelectedPath; // obtengo el directorio 
             }
 
-            if(VerificarTamanioDirectorio(carpetaSeleccionadaPath))
+            if (VerificarTamanioDirectorio(carpetaSeleccionadaPath))
             {
                 if (ConvertirDirectorioZip(carpetaSeleccionadaPath))
                 {
@@ -53,7 +53,7 @@ namespace OutlookAddIn1
             {
                 MessageBox.Show("Error, el directorio excede los 15MB", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
         }
 
         #region PUNTO 4 BUSCAR EMAIL
@@ -65,7 +65,7 @@ namespace OutlookAddIn1
         /// <param name="e"></param>
         private void btnDatosEmail_Click(object sender, RibbonControlEventArgs e)
         {
-            if(edtSearchBox.Text != "")
+            if (edtSearchBox.Text != "")
             {
                 BuscarProyectoCuerpoMail(edtSearchBox.Text);
             }
@@ -82,28 +82,38 @@ namespace OutlookAddIn1
 
             Microsoft.Office.Interop.Outlook.MailItem mailSeleccionado = (MailItem)thisAddIn.Application.ActiveExplorer().Selection[1];
 
-            if (!(mailSeleccionado is null))
+            if (proyecto.Contains("PROYECTO"))
             {
-                Microsoft.Office.Interop.Outlook.Inspector inspector = mailSeleccionado.GetInspector;
-
-                if (inspector.IsWordMail())
+                if (!(mailSeleccionado is null))
                 {
-                    var outlookWordDocument = inspector.WordEditor as Microsoft.Office.Interop.Word.Document;
+                    Microsoft.Office.Interop.Outlook.Inspector inspector = mailSeleccionado.GetInspector;
 
-                    Microsoft.Office.Interop.Word.Find find = outlookWordDocument.Content.Find;
-
-                    if (find.HitHighlight(proyecto, Microsoft.Office.Interop.Word.WdColor.wdColorAqua))
+                    if (inspector.IsWordMail())
                     {
-                        MessageBox.Show("Se encontró el proyecto", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        var outlookWordDocument = inspector.WordEditor as Microsoft.Office.Interop.Word.Document;
 
-                        SeleccionarProyectoCMB(proyecto);
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se encontró el proyecto", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
+                        Microsoft.Office.Interop.Word.Find find = outlookWordDocument.Content.Find;
 
+                        if (find.HitHighlight(proyecto, Microsoft.Office.Interop.Word.WdColor.wdColorAqua))
+                        {
+                            MessageBox.Show("Se encontró el proyecto", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            SeleccionarProyectoCMB(proyecto);
+                            EstablecerFechaLabel(proyecto);
+                            EstablecerRemitenteLabel(mailSeleccionado.SendUsingAccount.SmtpAddress);
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se encontró el proyecto", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+
+                    }
                 }
+
+            }
+            else
+            {
+                MessageBox.Show("Ingrese un nombre válido", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -111,28 +121,45 @@ namespace OutlookAddIn1
         {
             //API PROYECTO AGRARIO - 2022 - 12 - 06 03:21:19
             string nombre = proyecto.Split('-')[0];
-            MessageBox.Show(nombre, "oln");
 
             if (nombre.Contains("PROYECTO"))
             {
                 cmbProyectos.Text = nombre;
             }
 
-            
+
         }
 
-        public void EstablecerFechaLabel(string fecha)
+        public void EstablecerFechaLabel(string proyecto)
         {
+            string[] nombre = proyecto.Split('-');
 
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(nombre[1] + "/");
+            stringBuilder.Append(nombre[2] + "/");
+            stringBuilder.Append(nombre[3]);
+
+            lblFecha.Label = stringBuilder.ToString();
+        }
+
+        public void EstablecerRemitenteLabel(string remitente)
+        {
+            if (remitente.Contains("@"))
+            {
+                edtRemitente.Text = remitente;
+            }
+            else
+            {
+                edtRemitente.Text = "Remitente invalido";
+            }
         }
 
         #endregion
 
-
         #region Carga y Obtencion elementos ComboBox punto 1
         private void CargarElementosCmbProyectos(List<string> datos)
         {
-            
+
             foreach (var item in datos)
             {
                 RibbonDropDownItem newItem = Factory.CreateRibbonDropDownItem();
@@ -163,9 +190,9 @@ namespace OutlookAddIn1
 
         private bool VerificarTamanioDirectorio(string path)
         {
-            if(!(path is null))
+            if (!(path is null))
             {
-                DirectoryInfo directory= new DirectoryInfo(path);
+                DirectoryInfo directory = new DirectoryInfo(path);
                 FileInfo[] archivos = directory.GetFiles();
                 decimal tamanio = 0; // tamaño total del directorio
 
@@ -187,13 +214,13 @@ namespace OutlookAddIn1
         {
             if (!(path is null))
             {
-                using(ZipFile zip = new ZipFile())
+                using (ZipFile zip = new ZipFile())
                 {
                     zip.UseUnicodeAsNecessary = true;
                     zip.AddDirectory(path);
                     zip.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
                     zip.Comment = "El archivo zip fue creado" + System.DateTime.Now.ToString("G");
-                    this.fileFullPath= path + "/Directorio.zip";//seteo el path completo del archivo
+                    this.fileFullPath = path + "/Directorio.zip";//seteo el path completo del archivo
                     zip.Save(fileFullPath);
                     return true;
                 }
@@ -208,11 +235,11 @@ namespace OutlookAddIn1
         //El método estará asociado al evento Inspectors
         private void GenerarMail()
         {
-           
+
             var ol = new Microsoft.Office.Interop.Outlook.Application();
 
             Microsoft.Office.Interop.Outlook.MailItem mailItem = ol.CreateItem(Microsoft.Office.Interop.Outlook.OlItemType.olMailItem) as Microsoft.Office.Interop.Outlook.MailItem;
-            
+
             if (mailItem != null)
             {
                 if (mailItem.EntryID == null && this.cmbProyectos.Text != "")
@@ -220,12 +247,12 @@ namespace OutlookAddIn1
                     mailItem.Subject = this.cmbProyectos.Text;
                     string cuerpoMail = LeerTxt("C:\\Users\\Renzo\\Documents\\develop\\TRABAJO\\OoutlookAddIn\\OutlookAddIn1\\OutlookAddIn1\\bin\\Debug\\CartaCliente.txt");
 
-                    StringBuilder stringBuilder= new StringBuilder();
+                    StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.Append(cuerpoMail);
                     stringBuilder.Replace("NOMBREPROYECTO", this.cmbProyectos.Text);
                     stringBuilder.Append('\n' + $"{this.cmbProyectos.Text}-{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}");
 
-                    if(!File.Exists(this.fileFullPath))
+                    if (!File.Exists(this.fileFullPath))
                     {
                         MessageBox.Show("El arhivo no existe", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -239,15 +266,16 @@ namespace OutlookAddIn1
                     var thisAddIn = Globals.ThisAddIn;
 
 
-                    mailItem.DeleteAfterSubmit= false;
+                    mailItem.DeleteAfterSubmit = false;
 
                     mailItem.Display();
 
 
                     Microsoft.Office.Interop.Outlook.Folder carpetaEnviados = (Folder)thisAddIn.Application.Session.GetDefaultFolder(Microsoft.Office.Interop.Outlook.OlDefaultFolders.olFolderSentMail);
 
-                    if (carpetaEnviados != null) {
-                        mailItem.SaveSentMessageFolder= carpetaEnviados;
+                    if (carpetaEnviados != null)
+                    {
+                        mailItem.SaveSentMessageFolder = carpetaEnviados;
                         mailItem.Save();
                         string nombreArchivo = $"{this.cmbProyectos.Text}-{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}".Replace('/', '_').Replace(':', '_');
 
@@ -273,7 +301,7 @@ namespace OutlookAddIn1
         public string LeerTxt(string fileFullName)
         {
             string cuerpoMail = "";
-            if(!(fileFullName is null))
+            if (!(fileFullName is null))
             {
                 try
                 {
@@ -310,6 +338,6 @@ namespace OutlookAddIn1
 
 
 
-        
+
     }
 }

@@ -63,7 +63,6 @@
             this.btnGuardarMail = this.Factory.CreateRibbonButton();
             this.buttonGroup2 = this.Factory.CreateRibbonButtonGroup();
             this.btnGenerarTemplate = this.Factory.CreateRibbonButton();
-            this.group8 = this.Factory.CreateRibbonGroup();
             this.edtRemitente = this.Factory.CreateRibbonEditBox();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
@@ -86,7 +85,6 @@
             this.tab1.Groups.Add(this.group5);
             this.tab1.Groups.Add(this.group6);
             this.tab1.Groups.Add(this.group7);
-            this.tab1.Groups.Add(this.group8);
             this.tab1.Label = "PREMO";
             this.tab1.Name = "tab1";
             // 
@@ -144,7 +142,7 @@
             // 
             // lblProveedor
             // 
-            this.lblProveedor.Label = "PROVEEDOR";
+            this.lblProveedor.Label = "FECHA";
             this.lblProveedor.Name = "lblProveedor";
             // 
             // btnContactos
@@ -265,10 +263,6 @@
             this.btnGenerarTemplate.Name = "btnGenerarTemplate";
             this.btnGenerarTemplate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnGenerarTemplate_Click);
             // 
-            // group8
-            // 
-            this.group8.Name = "group8";
-            // 
             // edtRemitente
             // 
             this.edtRemitente.Enabled = false;
@@ -336,7 +330,6 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnGuardarMail;
         internal Microsoft.Office.Tools.Ribbon.RibbonButtonGroup buttonGroup2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnGenerarTemplate;
-        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group8;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnFechaComprometida;
         internal Microsoft.Office.Tools.Ribbon.RibbonLabel lblFecha;
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox edtRemitente;

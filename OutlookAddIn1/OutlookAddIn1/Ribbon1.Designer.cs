@@ -64,6 +64,7 @@
             this.buttonGroup2 = this.Factory.CreateRibbonButtonGroup();
             this.btnGenerarTemplate = this.Factory.CreateRibbonButton();
             this.group8 = this.Factory.CreateRibbonGroup();
+            this.edtRemitente = this.Factory.CreateRibbonEditBox();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.group2.SuspendLayout();
@@ -168,6 +169,7 @@
             // group4
             // 
             this.group4.Items.Add(this.edtSearchBox);
+            this.group4.Items.Add(this.edtRemitente);
             this.group4.Name = "group4";
             // 
             // edtSearchBox
@@ -267,6 +269,14 @@
             // 
             this.group8.Name = "group8";
             // 
+            // edtRemitente
+            // 
+            this.edtRemitente.Enabled = false;
+            this.edtRemitente.Label = "Remitente";
+            this.edtRemitente.Name = "edtRemitente";
+            this.edtRemitente.OfficeImageId = "ContactProperties";
+            this.edtRemitente.ShowImage = true;
+            // 
             // Ribbon1
             // 
             this.Name = "Ribbon1";
@@ -329,6 +339,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group8;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnFechaComprometida;
         internal Microsoft.Office.Tools.Ribbon.RibbonLabel lblFecha;
+        internal Microsoft.Office.Tools.Ribbon.RibbonEditBox edtRemitente;
     }
 
     partial class ThisRibbonCollection

@@ -95,6 +95,8 @@ namespace OutlookAddIn1
                     if (find.HitHighlight(proyecto, Microsoft.Office.Interop.Word.WdColor.wdColorAqua))
                     {
                         MessageBox.Show("Se encontró el proyecto", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        SeleccionarProyectoCMB(proyecto);
                     }
                     else
                     {
@@ -103,6 +105,25 @@ namespace OutlookAddIn1
 
                 }
             }
+        }
+
+        public void SeleccionarProyectoCMB(string proyecto)
+        {
+            //API PROYECTO AGRARIO - 2022 - 12 - 06 03:21:19
+            string nombre = proyecto.Split('-')[0];
+            MessageBox.Show(nombre, "oln");
+
+            if (nombre.Contains("PROYECTO"))
+            {
+                cmbProyectos.Text = nombre;
+            }
+
+            
+        }
+
+        public void EstablecerFechaLabel(string fecha)
+        {
+
         }
 
         #endregion

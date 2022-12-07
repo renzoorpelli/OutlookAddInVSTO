@@ -1,5 +1,6 @@
 ﻿using Ionic.Zip;
 using Microsoft.Office.Interop.Outlook;
+using Microsoft.Office.Interop.Word;
 using Microsoft.Office.Tools;
 using Microsoft.Office.Tools.Ribbon;
 using System;
@@ -55,10 +56,56 @@ namespace OutlookAddIn1
             
         }
 
+        #region PUNTO 4 BUSCAR EMAIL
+
+        /// <summary>
+        /// metodo encargado del evento click, se encarga de obtener
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDatosEmail_Click(object sender, RibbonControlEventArgs e)
         {
-
+            if(edtSearchBox.Text != "")
+            {
+                BuscarProyectoCuerpoMail(edtSearchBox.Text);
+            }
+            else
+            {
+                MessageBox.Show("Ingrese el TimeStamp del proyecto", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
+
+        public void BuscarProyectoCuerpoMail(string proyecto)
+        {
+            //obtengo referencia al AddIn
+            var thisAddIn = Globals.ThisAddIn;
+
+            Microsoft.Office.Interop.Outlook.MailItem mailSeleccionado = (MailItem)thisAddIn.Application.ActiveExplorer().Selection[1];
+
+            if (!(mailSeleccionado is null))
+            {
+                Microsoft.Office.Interop.Outlook.Inspector inspector = mailSeleccionado.GetInspector;
+
+                if (inspector.IsWordMail())
+                {
+                    var outlookWordDocument = inspector.WordEditor as Microsoft.Office.Interop.Word.Document;
+
+                    Microsoft.Office.Interop.Word.Find find = outlookWordDocument.Content.Find;
+
+                    if (find.HitHighlight(proyecto, Microsoft.Office.Interop.Word.WdColor.wdColorAqua))
+                    {
+                        MessageBox.Show("Se encontró el proyecto", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró el proyecto", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
+                }
+            }
+        }
+
+        #endregion
 
 
         #region Carga y Obtencion elementos ComboBox punto 1

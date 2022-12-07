@@ -172,7 +172,7 @@
             // 
             // edtSearchBox
             // 
-            this.edtSearchBox.Label = "Search";
+            this.edtSearchBox.Label = "Buscar Proyecto";
             this.edtSearchBox.Name = "edtSearchBox";
             this.edtSearchBox.OfficeImageId = "InstantSearch";
             this.edtSearchBox.ShowImage = true;

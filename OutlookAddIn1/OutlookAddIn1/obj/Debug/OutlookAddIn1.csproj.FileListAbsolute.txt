@@ -43,3 +43,4 @@ C:\Users\Renzo\Documents\develop\TRABAJO\OoutlookAddIn\OutlookAddIn1\OutlookAddI
 C:\Users\Renzo\Documents\develop\TRABAJO\OoutlookAddIn\OutlookAddIn1\OutlookAddIn1\bin\Debug\DotNetZip.dll
 C:\Users\Renzo\Documents\develop\TRABAJO\OoutlookAddIn\OutlookAddIn1\OutlookAddIn1\bin\Debug\DotNetZip.pdb
 C:\Users\Renzo\Documents\develop\TRABAJO\OoutlookAddIn\OutlookAddIn1\OutlookAddIn1\bin\Debug\DotNetZip.xml
+C:\Users\Renzo\Documents\develop\TRABAJO\OoutlookAddIn\OutlookAddIn1\OutlookAddIn1\obj\Debug\OutlookAddIn1.csproj.ResolveComReference.cache

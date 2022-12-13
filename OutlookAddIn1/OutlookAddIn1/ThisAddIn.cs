@@ -31,9 +31,7 @@ namespace OutlookAddIn1
 
 
 
-        #region Punto 3 Generar Log Mail Enviado
 
-        #endregion
 
         #region Código generado por VSTO
 

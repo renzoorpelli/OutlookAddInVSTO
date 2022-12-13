@@ -41,7 +41,7 @@
             this.cmbRFQ = this.Factory.CreateRibbonComboBox();
             this.group2 = this.Factory.CreateRibbonGroup();
             this.cmbRevision = this.Factory.CreateRibbonComboBox();
-            this.btnDatosEmail = this.Factory.CreateRibbonButton();
+            this.btnRegistrarEmail = this.Factory.CreateRibbonButton();
             this.group3 = this.Factory.CreateRibbonGroup();
             this.lblProveedor = this.Factory.CreateRibbonLabel();
             this.btnContactos = this.Factory.CreateRibbonButton();
@@ -49,6 +49,8 @@
             this.lblFecha = this.Factory.CreateRibbonLabel();
             this.group4 = this.Factory.CreateRibbonGroup();
             this.edtSearchBox = this.Factory.CreateRibbonEditBox();
+            this.edtRemitente = this.Factory.CreateRibbonEditBox();
+            this.btnDatosEmail = this.Factory.CreateRibbonButton();
             this.group5 = this.Factory.CreateRibbonGroup();
             this.btnRutaIT = this.Factory.CreateRibbonButton();
             this.btnRutaIC = this.Factory.CreateRibbonButton();
@@ -59,11 +61,10 @@
             this.group7 = this.Factory.CreateRibbonGroup();
             this.lblAcciones = this.Factory.CreateRibbonLabel();
             this.buttonGroup1 = this.Factory.CreateRibbonButtonGroup();
-            this.btnAplicar = this.Factory.CreateRibbonButton();
             this.btnGuardarMail = this.Factory.CreateRibbonButton();
+            this.btnAplicar = this.Factory.CreateRibbonButton();
             this.buttonGroup2 = this.Factory.CreateRibbonButtonGroup();
             this.btnGenerarTemplate = this.Factory.CreateRibbonButton();
-            this.edtRemitente = this.Factory.CreateRibbonEditBox();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.group2.SuspendLayout();
@@ -117,7 +118,7 @@
             // group2
             // 
             this.group2.Items.Add(this.cmbRevision);
-            this.group2.Items.Add(this.btnDatosEmail);
+            this.group2.Items.Add(this.btnRegistrarEmail);
             this.group2.Name = "group2";
             // 
             // cmbRevision
@@ -126,11 +127,13 @@
             this.cmbRevision.Name = "cmbRevision";
             this.cmbRevision.Text = null;
             // 
-            // btnDatosEmail
+            // btnRegistrarEmail
             // 
-            this.btnDatosEmail.Label = "Obtener datos email";
-            this.btnDatosEmail.Name = "btnDatosEmail";
-            this.btnDatosEmail.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnDatosEmail_Click);
+            this.btnRegistrarEmail.Label = "Registrar email";
+            this.btnRegistrarEmail.Name = "btnRegistrarEmail";
+            this.btnRegistrarEmail.OfficeImageId = "MeetingsToolAppointmentSave";
+            this.btnRegistrarEmail.ShowImage = true;
+            this.btnRegistrarEmail.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnRegistrarEmail_Click);
             // 
             // group3
             // 
@@ -168,6 +171,7 @@
             // 
             this.group4.Items.Add(this.edtSearchBox);
             this.group4.Items.Add(this.edtRemitente);
+            this.group4.Items.Add(this.btnDatosEmail);
             this.group4.Name = "group4";
             // 
             // edtSearchBox
@@ -177,6 +181,23 @@
             this.edtSearchBox.OfficeImageId = "InstantSearch";
             this.edtSearchBox.ShowImage = true;
             this.edtSearchBox.Text = null;
+            // 
+            // edtRemitente
+            // 
+            this.edtRemitente.Enabled = false;
+            this.edtRemitente.Label = "Remitente";
+            this.edtRemitente.Name = "edtRemitente";
+            this.edtRemitente.OfficeImageId = "ContactProperties";
+            this.edtRemitente.ShowImage = true;
+            this.edtRemitente.Text = null;
+            // 
+            // btnDatosEmail
+            // 
+            this.btnDatosEmail.Label = "Obtener datos email";
+            this.btnDatosEmail.Name = "btnDatosEmail";
+            this.btnDatosEmail.OfficeImageId = "ListPublish";
+            this.btnDatosEmail.ShowImage = true;
+            this.btnDatosEmail.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnDatosEmail_Click);
             // 
             // group5
             // 
@@ -238,19 +259,22 @@
             // 
             // buttonGroup1
             // 
-            this.buttonGroup1.Items.Add(this.btnAplicar);
             this.buttonGroup1.Items.Add(this.btnGuardarMail);
+            this.buttonGroup1.Items.Add(this.btnAplicar);
             this.buttonGroup1.Name = "buttonGroup1";
-            // 
-            // btnAplicar
-            // 
-            this.btnAplicar.Label = "Aplicar en PREMO";
-            this.btnAplicar.Name = "btnAplicar";
             // 
             // btnGuardarMail
             // 
             this.btnGuardarMail.Label = "Guardar Mail";
             this.btnGuardarMail.Name = "btnGuardarMail";
+            this.btnGuardarMail.OfficeImageId = "MeetingsToolAppointmentSave";
+            this.btnGuardarMail.ShowImage = true;
+            this.btnGuardarMail.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnGuardarMail_Click);
+            // 
+            // btnAplicar
+            // 
+            this.btnAplicar.Label = "Aplicar en PREMO";
+            this.btnAplicar.Name = "btnAplicar";
             // 
             // buttonGroup2
             // 
@@ -261,15 +285,9 @@
             // 
             this.btnGenerarTemplate.Label = "Generar Template";
             this.btnGenerarTemplate.Name = "btnGenerarTemplate";
+            this.btnGenerarTemplate.OfficeImageId = "TemplatesMenu";
+            this.btnGenerarTemplate.ShowImage = true;
             this.btnGenerarTemplate.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btnGenerarTemplate_Click);
-            // 
-            // edtRemitente
-            // 
-            this.edtRemitente.Enabled = false;
-            this.edtRemitente.Label = "Remitente";
-            this.edtRemitente.Name = "edtRemitente";
-            this.edtRemitente.OfficeImageId = "ContactProperties";
-            this.edtRemitente.ShowImage = true;
             // 
             // Ribbon1
             // 
@@ -333,6 +351,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnFechaComprometida;
         internal Microsoft.Office.Tools.Ribbon.RibbonLabel lblFecha;
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox edtRemitente;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnRegistrarEmail;
     }
 
     partial class ThisRibbonCollection

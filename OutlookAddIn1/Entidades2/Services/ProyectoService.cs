@@ -13,15 +13,11 @@ namespace Entidades2.Services
     {
         public static List<Proyectos> ObtenerProyectos()
         {
-            var lista = new List<object>();
-
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     string URL = "https://localhost:7274/proyectos";
-
-                    //var response = client.GetFromJsonAsync<List<Proyectos>>(URL).Result;
 
                     var response = client.GetStringAsync(URL).Result; //nos devuelve el json en un string
 

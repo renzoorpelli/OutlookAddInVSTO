@@ -15,8 +15,8 @@ namespace OutlookAddIn1
     public partial class Ribbon1
     {
         private string carpetaSeleccionadaPath; //path carpeta seleccionada generar Template
-
         private string fileFullPath;
+        private string logFileFullPath;
 
 
 
@@ -25,11 +25,9 @@ namespace OutlookAddIn1
             //obtengo la lista de nombres de los proyectos y las cargo en el cmb
             var listaProyectos = ObtenerNombresProyectos();
             this.CargarElementosCmbProyectos(listaProyectos);
-
-
         }
 
-        //punto 2
+        #region PUNTO 2
         private void btnGenerarTemplate_Click(object sender, RibbonControlEventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
@@ -55,6 +53,90 @@ namespace OutlookAddIn1
             }
 
         }
+
+        #endregion
+
+        #region PUNTO 4.1
+        private void btnRegistrarEmail_Click(object sender, RibbonControlEventArgs e)
+        {
+            if (cmbProyectos.Text != "" && lblFecha.Label != "dd/MM/YYYY")
+            {
+                if (edtSearchBox.Text != "")
+                {
+                    string path = "C:\\Users\\Renzo\\Documents\\develop\\TRABAJO\\OoutlookAddIn\\OutlookAddIn1\\OutlookAddIn1\\bin\\Debug";
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Append(cmbProyectos.Text + DateTime.Now.ToShortDateString().Replace("/", "_") + ".txt");
+                    string fileDirectory = Path.Combine(path, stringBuilder.ToString());
+
+                    string datos = ObtenerDatosMailSeleccionado(edtSearchBox.Text);
+                    GenerarCuerpoArchivo(datos, fileDirectory);
+                    MessageBox.Show($"Archivo guardado corretamente en ${fileDirectory}", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("El proyecto o Archivo del mail no existe", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Debe seleccionar un proyecto y un timestamp", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>
+        /// método encargado de generar el cuerpo del archivo el cual persistirá los datos del mail
+        /// </summary>
+        /// <param name="texto">los datos que contendrá el txt</param>
+        /// <param name="rutaArchivo"></param>
+        private void GenerarCuerpoArchivo(string texto, string rutaArchivo)
+        {
+            GenerarLogsMail(texto, rutaArchivo);
+        }
+
+        private string ObtenerDatosMailSeleccionado(string proyecto)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            var thisAddIn = Globals.ThisAddIn;
+
+            Microsoft.Office.Interop.Outlook.MailItem mailSeleccionado = (MailItem)thisAddIn.Application.ActiveExplorer().Selection[1];
+
+            if (proyecto.Contains("PROYECTO"))
+            {
+                if (!(mailSeleccionado is null))
+                {
+                    Microsoft.Office.Interop.Outlook.Inspector inspector = mailSeleccionado.GetInspector;
+
+                    if (inspector.IsWordMail())
+                    {
+                        var outlookWordDocument = inspector.WordEditor as Microsoft.Office.Interop.Word.Document;
+
+                        Microsoft.Office.Interop.Word.Find find = outlookWordDocument.Content.Find;
+
+                        if (find.HitHighlight(proyecto, Microsoft.Office.Interop.Word.WdColor.wdColorAqua))
+                        {
+                            string nombreProyecto = proyecto.Split('-')[0];
+                            stringBuilder.AppendLine("NOMBRE PROYECTO: " + nombreProyecto);
+                            stringBuilder.AppendLine("EMAIL REMITENTE: " + mailSeleccionado.SendUsingAccount.SmtpAddress);
+                            stringBuilder.AppendLine("FECHA ACTUAL: " + DateTime.Now.ToShortDateString());
+                        }
+                        else
+                        {
+                            MessageBox.Show("No se encontró el proyecto", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ingrese un nombre válido", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+
+            return stringBuilder.ToString();
+        }
+
+        #endregion
 
         #region PUNTO 4 BUSCAR EMAIL
 
@@ -119,15 +201,8 @@ namespace OutlookAddIn1
 
         public void SeleccionarProyectoCMB(string proyecto)
         {
-            //API PROYECTO AGRARIO - 2022 - 12 - 06 03:21:19
             string nombre = proyecto.Split('-')[0];
-
-            if (nombre.Contains("PROYECTO"))
-            {
-                cmbProyectos.Text = nombre;
-            }
-
-
+            cmbProyectos.Text = nombre;
         }
 
         public void EstablecerFechaLabel(string proyecto)
@@ -279,9 +354,9 @@ namespace OutlookAddIn1
                         mailItem.Save();
                         string nombreArchivo = $"{this.cmbProyectos.Text}-{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}".Replace('/', '_').Replace(':', '_');
 
-                        string fileFullName = "C:\\Users\\Renzo\\Documents\\develop\\TRABAJO\\OoutlookAddIn\\OutlookAddIn1\\OutlookAddIn1\\bin\\Debug\\" + nombreArchivo + ".txt";
+                        logFileFullPath = "C:\\Users\\Renzo\\Documents\\develop\\TRABAJO\\OoutlookAddIn\\OutlookAddIn1\\OutlookAddIn1\\bin\\Debug\\" + nombreArchivo + ".txt";
 
-                        this.GenerarLogsMail($"{this.cmbProyectos.Text}-{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}", fileFullName);
+                        this.GenerarLogsMail($"{this.cmbProyectos.Text}-{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}", logFileFullPath);
                     }
 
                 }
@@ -324,7 +399,7 @@ namespace OutlookAddIn1
         /// <summary>
         /// metodo encargado de generar un log de un mail enviado en un arhivo txt
         /// </summary>
-        /// <param name="mailItem"></param>
+        /// <param name="mailInfo"></param>
         /// <param name="filename"></param>
         private void GenerarLogsMail(string mailInfo, string filename)
         {
@@ -334,10 +409,54 @@ namespace OutlookAddIn1
             }
 
         }
+
+
+
+
         #endregion
 
+        #region PUNTO 5
+        private void btnGuardarMail_Click(object sender, RibbonControlEventArgs e)
+        {
+            var thisAddIn = Globals.ThisAddIn;
+            Microsoft.Office.Interop.Outlook.MailItem mailSeleccionado = (MailItem)thisAddIn.Application.ActiveExplorer().Selection[1];
 
+            if (!(mailSeleccionado is null) && mailSeleccionado.Subject.Contains("PROYECTO"))
+            {
+                FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    carpetaSeleccionadaPath = folderBrowserDialog.SelectedPath; // obtengo el directorio
 
+                    GuardarMailMSG(carpetaSeleccionadaPath, mailSeleccionado);
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Por favor seleccione un mail válido", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+        }
+
+        private void GuardarMailMSG(string pathGuardar, Microsoft.Office.Interop.Outlook.MailItem mailSeleccionado)
+        {
+            try
+            {
+                string date = mailSeleccionado.ReceivedTime.ToString().Replace("/", "_").Replace(":", "_");
+                string filename = mailSeleccionado.Subject + date + ".msg";
+                string fileFullPath = Path.Combine(pathGuardar, filename);
+                mailSeleccionado.SaveAs(fileFullPath, Microsoft.Office.Interop.Outlook.OlSaveAsType.olMSG);
+                MessageBox.Show($"Mail Guardado Correctamente en {fileFullPath}", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+        }
 
     }
+
+    #endregion
 }
+
